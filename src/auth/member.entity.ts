@@ -49,7 +49,8 @@ export class Member extends BaseEntity {
     @CreateDateColumn({default: () => "NOW()"})
     updateAt: Date;
 
-    @OneToOne(() => MemberDetail, memberDetail => memberDetail.member, {cascade: true})
+    @OneToOne(() => MemberDetail, {cascade: true})
+    @JoinColumn()
     memberDetail: MemberDetail;
 
     // @OneToMany(type => Board, board => board.user, { eager:true })

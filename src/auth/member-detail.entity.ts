@@ -28,7 +28,6 @@ export class MemberDetail extends BaseEntity {
     updateAt: Date;
     
     //회원 고유번호
-    @OneToOne(() => Member, member => member.memberDetail)
-    @JoinColumn()
+    @OneToOne(() => Member)
     member: Member;
 }
