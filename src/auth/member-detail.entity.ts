@@ -17,7 +17,7 @@ export class MemberDetail extends BaseEntity {
 
     //권한(번호)
     @Column()
-    permission: number;
+    permission: number = 1;
 
     //생성일시
     @CreateDateColumn({default: () => "CURRENT_TIMESTAMP()"})

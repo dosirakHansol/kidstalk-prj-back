@@ -1,4 +1,3 @@
-import { Board } from "src/boards/board.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { MemberDetail } from "./member-detail.entity";
 
