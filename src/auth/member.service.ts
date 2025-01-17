@@ -5,13 +5,15 @@ import { JwtService } from '@nestjs/jwt';
 import { MemberSignInDto, MemberSignUpDto } from './dto/member-credential.dto';
 import { MemberRepository } from './member.repository';
 import { ResponseDto } from 'src/common/dto/response.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class MemberService {
     constructor(
         @InjectRepository(MemberRepository)
         private memberRepository: MemberRepository,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private readonly configService: ConfigService,
     ) {}
 
     private logger = new Logger('MemberService');
@@ -33,9 +35,9 @@ export class MemberService {
             // 입력 아이디와 같은 유저가 있다면
             if((await bcrypt.compare(password, (await user).password))){
                 // 비밀번호도 맞는지 확인
-                // 유저 토큰 생성 (secret + payload)
-                const payload = { userId };
-                const accessToken = await this.jwtService.sign(payload);
+                
+                // 유저 토큰 생성
+                const accessToken = await this.generateAccessToken(userId);
                 
                 this.logger.log(`login success... Token: ${accessToken}`);
     
@@ -56,4 +58,41 @@ export class MemberService {
 
         return this.responseDto;
     }
+
+
+    // Token (S)
+    private async generateAccessToken(userId: string): Promise<string> {
+        const token = this.jwtService.sign(
+            { userId },
+            {
+                secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+                expiresIn: Number(
+                    this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+                ),
+            },
+        )
+
+        return token;
+    }
+
+    // // refresh token 생성
+    // private async generateRefreshToken(userId: string): Promise<string> {
+    //     const token = this.jwtService.sign(
+    //         { userId },
+    //         {
+    //         secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+    //         expiresIn: Number(
+    //             this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
+    //         ),
+    //         },
+    //     )
+
+    //     return token
+    // }
+    
+    // async setRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    //     const ttl = this.configService.get('JWT_REFRESH_TOKEN_EXPIRATION_TIME') // TTL 값 설정
+    //     await this.cacheService.set(`refreshToken:${userId}`, refreshToken, +ttl)
+    // } 
+    // Token (E)
 }

@@ -7,17 +7,22 @@ import { MemberController } from './member.controller';
 import { MemberService } from './member.service';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Member]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: 'interstella_allets',
-      signOptions: {
-        expiresIn: 60 * 60,
-      }
-    })
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [MemberController],
   providers: [MemberService, MemberRepository, JwtStrategy],
