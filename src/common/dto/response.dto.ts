@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ResponseDto {
     @ApiProperty({ example: "응답에 대한 상태 코드를 표시합니다." })
-    status: number;
+    statusCode: number;
 
     @ApiProperty({ example: '응답에 대한 내용을 표시합니다.' })
     message: string;

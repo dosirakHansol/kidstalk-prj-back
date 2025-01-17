@@ -38,21 +38,28 @@ export class MemberService {
                 
                 // 유저 토큰 생성
                 const accessToken = await this.generateAccessToken(userId);
+                // const refreshToken = await this.generateRefreshToken(userId);
+
+                // await this.setRefreshToken(userId, refreshToken);
                 
                 this.logger.log(`login success... Token: ${accessToken}`);
     
-                this.responseDto.status = HttpStatus.OK;
+                this.responseDto.statusCode = HttpStatus.OK;
                 this.responseDto.message = "로그인 성공";
                 this.responseDto.data = {accessToken};
             } else {
                 // 비밀번호가 틀린경우
-                this.responseDto.status = HttpStatus.BAD_REQUEST;
-                this.responseDto.message = `로그인 실패, 비밀번호를 확인해주세요.`;
+                throw new UnauthorizedException(`로그인 실패, 비밀번호를 확인해주세요.`);
+
+                // this.responseDto.statusCode = HttpStatus.BAD_REQUEST;
+                // this.responseDto.message = `로그인 실패, 비밀번호를 확인해주세요.`;
             }
         } else {
             // 입력 아이디와 같은 유저가 없다면
-            this.responseDto.status = HttpStatus.BAD_REQUEST;
-            this.responseDto.message = `로그인 실패, 아이디를 확인해주세요.`;
+            throw new UnauthorizedException(`로그인 실패, 아이디를 확인해주세요.`);
+
+            // this.responseDto.statusCode = HttpStatus.BAD_REQUEST;
+            // this.responseDto.message = `로그인 실패, 아이디를 확인해주세요.`;
             // throw new UnauthorizedException('login faild: not match password..');
         }
 

@@ -40,21 +40,19 @@ export class MemberRepository extends Repository<Member> {
         try {
             await this.save(member);
 
-            this.responseDto.status = HttpStatus.CREATED;
+            this.responseDto.statusCode = HttpStatus.CREATED;
             this.responseDto.message = "회원가입 성공";
         } catch (error) {
             this.logger.error(JSON.stringify(error));
 
-            // if(error.code === '23505'){
-            //     this.logger.error(`${error}`);
-            //     // throw new ConflictException('Existing username');
-            // } else{
-            //     this.logger.error(`${error}`);
-            //     // throw new InternalServerErrorException(`Sever Error : ${error.message}`);
-            // }
+            if(error.code === '23505'){
+                throw new ConflictException(`${error.message}`);
+            } else{
+                throw new InternalServerErrorException(`Sever Error : ${error.message}`);
+            }
 
-            this.responseDto.status = HttpStatus.BAD_REQUEST;
-            this.responseDto.message = `회원가입 실패 ${error}`;
+            // this.responseDto.statusCode = HttpStatus.BAD_REQUEST;
+            // this.responseDto.message = `회원가입 실패 ${error}`;
         }
 
         return this.responseDto;
