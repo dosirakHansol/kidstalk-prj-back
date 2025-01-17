@@ -12,14 +12,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         private memberRepository: MemberRepository
     ) {
         super({
-            secretOrKey: 'Secret1234',
+            secretOrKey: 'interstella_allets',
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         })
     }
 
     async validate(payload) {
-        const { name } = payload;
-        const member: Member = await this.memberRepository.findOneBy({ name });
+        const { userId } = payload;
+        const member: Member = await this.memberRepository.findOneBy({ userId });
 
         if(!member) {
             throw new UnauthorizedException();

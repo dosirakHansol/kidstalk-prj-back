@@ -20,5 +20,13 @@ export class MemberDetailDto {
     })
     tel: string;
 
+    @ApiProperty({ 
+        type: String, 
+        description: '프로필사진', 
+        required: true, 
+        example: '이미지 path' 
+    })
+    memberImg: string;
+
     permission: number;
 }

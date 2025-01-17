@@ -31,6 +31,8 @@ export class MemberService {
             // 유저 토큰 생성 (secret + payload)
             const payload = { userId };
             const accessToken = await this.jwtService.sign(payload);
+            
+            this.logger.log(`login success... Token: ${accessToken}`);
 
             return { accessToken };
         } else{

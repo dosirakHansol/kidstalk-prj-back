@@ -65,29 +65,25 @@ export class MemberSignUpDto {
 
 export class MemberSignInDto {
     @IsString()
-    @MinLength(4)
-    @MaxLength(20)
     @Matches(/^[a-zA-Z0-9]*$/, {
         message: 'id only accepts english and number...'
     })
     @ApiProperty({ 
         type: String, 
-        description: '로그인 아이디, 4 ~ 20 자의 숫자와 영어를 합친 문자 ', 
+        description: '로그인 아이디', 
         required: true, 
         example: 'test1234' 
     })
     userId: string;
 
     @IsString()
-    @MinLength(4)
-    @MaxLength(20)
     //영어랑 숫자만 가능
     @Matches(/^[a-zA-Z0-9]*$/, {
         message: 'password only accepts english and number...'
     })
     @ApiProperty({ 
         type: String, 
-        description: '사용자 비밀번호, 4 ~ 20 자의 숫자와 영어를 합친 문자 ', 
+        description: '로그인 비밀번호', 
         required: true, 
         example: 'test1234' 
     })
