@@ -4,6 +4,9 @@ import * as bcrypt from "bcryptjs";
 import { MemberSignInDto, MemberSignUpDto } from './dto/member-credential.dto';
 import { Member } from "./member.entity";
 import { MemberDetail } from "./member-detail.entity";
+import { ResponseDto } from "src/common/dto/response.dto";
+import { HttpStatus } from "@nestjs/common";
+import { MemberDetailDto } from "./dto/member-detail.dto";
 
 @Injectable()
 export class MemberRepository extends Repository<Member> {
@@ -12,36 +15,48 @@ export class MemberRepository extends Repository<Member> {
     }
 
     private logger = new Logger('MemberRepository');
+    private responseDto = new ResponseDto;
     
-    async createMember(memberSignUpDto: MemberSignUpDto): Promise<void> {
+    async createMember(memberSignUpDto: MemberSignUpDto): Promise<ResponseDto> {
         const { userId, name, password, location, detail } = memberSignUpDto;
 
         //비밀번호 암호화
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
 
+        //detail쪽 값이 빈 경우
+        let memberDetail: MemberDetailDto = !detail ? new MemberDetailDto() : detail;
+
         const member = this.create({ 
             userId, 
             name, 
             password: hashedPassword, 
             location, 
-            memberDetail: detail
+            memberDetail: memberDetail
         });
 
         this.logger.log(`before save member entity : ${JSON.stringify(member)}`)
 
         try {
             await this.save(member);
+
+            this.responseDto.status = HttpStatus.CREATED;
+            this.responseDto.message = "회원가입 성공";
         } catch (error) {
             this.logger.error(JSON.stringify(error));
 
-            if(error.code === '23505'){
-                this.logger.error(`${error}`);
-                throw new ConflictException('Existing username');
-            } else{
-                this.logger.error(`${error}`);
-                throw new InternalServerErrorException(`Sever Error : ${error.message}`);
-            }
+            // if(error.code === '23505'){
+            //     this.logger.error(`${error}`);
+            //     // throw new ConflictException('Existing username');
+            // } else{
+            //     this.logger.error(`${error}`);
+            //     // throw new InternalServerErrorException(`Sever Error : ${error.message}`);
+            // }
+
+            this.responseDto.status = HttpStatus.BAD_REQUEST;
+            this.responseDto.message = `회원가입 실패 ${error}`;
         }
+
+        return this.responseDto;
     }
 }
