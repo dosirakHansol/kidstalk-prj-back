@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { BoardsModule } from './boards/boards.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './configs/typeorm.config';
-import { AuthModule } from './auth/auth.module';
 import { MemberModule } from './auth/member.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -16,6 +15,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: async (configService: ConfigService) => typeORMConfig(configService),
       inject: [ConfigService],
     }),
+    RedisModule,
     MemberModule,
   ],
   controllers: [],

@@ -8,11 +8,13 @@ import { MemberService } from './member.service';
 import { MemberRepository } from './member.repository';
 import { Member } from './member.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Member]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
+    RedisModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
