@@ -1,4 +1,4 @@
-import { ExecutionContext, HttpStatus, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, ExecutionContext, HttpStatus, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
 import { Observable } from "rxjs";
@@ -20,7 +20,7 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
         const req = context.switchToHttp().getRequest();
         const token = req.headers['authorization']?.split(' ')[1];
 
-        if(!token) throw new UnauthorizedException('No token provided...');
+        if(!token) throw new BadRequestException('No token provided...');
 
         try {
             //JWT 유효시간 확인
@@ -30,10 +30,10 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
         } catch (error) {
             this.logger.log('json web token error', error)
             if(error.name === "TokenExpiredError"){
-                //JWT 유효시간 만료
+                //JWT 유효시간 만료 (유효기간 만료시에만 401로 던져서 구분하도록)
                 throw new UnauthorizedException('Token needs refresh...');
             } else{
-                throw new UnauthorizedException('Invalid Token...');
+                throw new BadRequestException('Invalid Token...');
             }
         }
     }
