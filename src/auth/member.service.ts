@@ -7,6 +7,7 @@ import { MemberRepository } from './member.repository';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from 'src/redis/redis.service';
+import { Member } from './member.entity';
 
 @Injectable()
 export class MemberService {
@@ -100,6 +101,17 @@ export class MemberService {
         )
 
         return token
+    }
+
+    // token 검증
+    private async validateUser(userId): Promise<boolean> {
+        const user = this.memberRepository.findOneBy({ userId });
+
+        if(!user) {
+            throw new UnauthorizedException("can't find user...");
+        } else {
+            return true;
+        }
     }
     // Token (E)
 }

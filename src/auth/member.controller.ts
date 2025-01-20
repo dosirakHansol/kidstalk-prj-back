@@ -6,6 +6,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 import { Member } from './member.entity';
 import { GetMember } from './get-member-decorator';
 import { ResponseDto } from 'src/common/dto/response.dto';
+import { CustomAuthGuard } from 'src/common/guard/custom-auth-guard';
 
 @Controller('member')
 @ApiTags('Member API')
@@ -37,7 +38,8 @@ export class MemberController {
     @Get('/test')
     @ApiOperation({ summary: "토큰 테스트", description: '토큰정보로 유저정보 가져오기' })
     @ApiBearerAuth()
-    @UseGuards(AuthGuard())
+    // @UseGuards(AuthGuard())
+    @UseGuards(CustomAuthGuard)
     test(@GetMember() member: Member) {
         console.log('member', member);
     }
