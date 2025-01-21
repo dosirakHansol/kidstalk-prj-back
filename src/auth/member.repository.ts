@@ -15,7 +15,6 @@ export class MemberRepository extends Repository<Member> {
     }
 
     private logger = new Logger('MemberRepository');
-    private responseDto = new ResponseDto;
     
     async createMember(memberSignUpDto: MemberSignUpDto): Promise<ResponseDto> {
         const { userId, name, password, location, detail } = memberSignUpDto;
@@ -40,8 +39,7 @@ export class MemberRepository extends Repository<Member> {
         try {
             await this.save(member);
 
-            this.responseDto.statusCode = HttpStatus.CREATED;
-            this.responseDto.message = "회원가입 성공";
+            return new ResponseDto(HttpStatus.CREATED, "회원가입 성공", {});
         } catch (error) {
             this.logger.error(JSON.stringify(error));
 
@@ -51,6 +49,5 @@ export class MemberRepository extends Repository<Member> {
                 throw new InternalServerErrorException(`Sever Error : ${error.message}`);
             }
         }
-        return this.responseDto;
     }
 }

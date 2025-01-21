@@ -20,7 +20,6 @@ export class MemberService {
     ) {}
 
     private logger = new Logger('MemberService');
-    private responseDto = new ResponseDto;
 
     async signUp(
         memberSignUpDto: MemberSignUpDto
@@ -57,9 +56,7 @@ export class MemberService {
                 
                 this.logger.log(`login success... Token: ${accessToken}`);
     
-                this.responseDto.statusCode = HttpStatus.OK;
-                this.responseDto.message = "로그인 성공";
-                this.responseDto.data = {accessToken, refreshToken};
+                return new ResponseDto(HttpStatus.OK, "로그인 성공", {accessToken, refreshToken});
             } else {
                 // 비밀번호가 틀린경우
                 throw new BadRequestException(`로그인 실패, 비밀번호를 확인해주세요.`);
@@ -68,8 +65,13 @@ export class MemberService {
             // 입력 아이디와 같은 유저가 없다면
             throw new BadRequestException(`로그인 실패, 아이디를 확인해주세요.`);
         }
+    }
 
-        return this.responseDto;
+    async signOut(refreshToken: string): Promise<ResponseDto> {
+        // 로그아웃시 refresh token redis에서 삭제
+        await this.redisService.del(refreshToken);
+
+        return new ResponseDto(HttpStatus.OK, "로그아웃 성공", {});
     }
 
 
@@ -124,14 +126,14 @@ export class MemberService {
                 this.configService.get("REDIS_CACHE_TTL") 
             );
 
-            this.responseDto.statusCode = HttpStatus.OK;
-            this.responseDto.message = "토큰 재생성 성공";
-            this.responseDto.data = {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken
-            };
-
-            return this.responseDto;
+            return new ResponseDto(
+                HttpStatus.OK, 
+                "토큰 재생성 성공", 
+                {
+                    accessToken: newAccessToken,
+                    refreshToken: newRefreshToken
+                }
+            );
         } else{
             // refresh token 없음
             throw new BadRequestException("Not exist your refresh token...");

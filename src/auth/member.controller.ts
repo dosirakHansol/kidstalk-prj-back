@@ -35,8 +35,29 @@ export class MemberController {
         return this.memberService.signIn(memberSignInDto);
     }
 
+    @Post('/signout')
+    @ApiOperation({ summary: "로그아웃", description: 'Refresh Token DB에서 삭제' })
+    @ApiResponse({status: HttpStatus.OK, description: '로그아웃 성공 응답', type: ResponseDto,})
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+            refreshToken: {
+                type: 'string',
+                description: 'The refresh token string',
+            },
+            },
+            required: ['refreshToken'],
+        },
+    })
+    signOut(
+        @Body("refreshToken") refreshToken: string
+    ): Promise<ResponseDto> {
+        return this.memberService.signOut(refreshToken);
+    }
+
     @Get('/test')
-    @ApiOperation({ summary: "토큰 테스트", description: '토큰정보로 유저정보 가져오기' })
+    @ApiOperation({ summary: "Access 토큰 테스트", description: '토큰정보로 유저정보 가져오기' })
     @ApiBearerAuth()
     @UseGuards(CustomAuthGuard)
     test(@GetMember() member: Member) {
@@ -45,6 +66,7 @@ export class MemberController {
 
     @Post('/refresh')
     @ApiOperation({ summary: "토큰 재발급", description: '리프레시 토큰 확인 후 재발급' })
+    @ApiResponse({status: HttpStatus.OK, description: '토큰 재발급 성공 응답', type: ResponseDto,})
     @ApiBody({
         schema: {
             type: 'object',
