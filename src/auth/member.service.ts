@@ -80,7 +80,8 @@ export class MemberService {
         const token = this.jwtService.sign(
             { 
                 userId: member.userId,
-                name: member.name
+                name: member.name,
+                id: member.id
             },
             {
                 secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
@@ -98,7 +99,8 @@ export class MemberService {
         const token = this.jwtService.sign(
             { 
                 userId: member.userId,
-                name: member.name
+                name: member.name,
+                id: member.id
             },
             {
                 secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
@@ -108,7 +110,7 @@ export class MemberService {
             },
         )
 
-        return token
+        return token;
     }
 
     // check refresh token then generate new token

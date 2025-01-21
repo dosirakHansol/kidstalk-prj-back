@@ -14,7 +14,6 @@ import { RedisModule } from 'src/redis/redis.module';
   imports: [
     TypeOrmModule.forFeature([Member]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    RedisModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -25,6 +24,7 @@ import { RedisModule } from 'src/redis/redis.module';
       }),
       inject: [ConfigService],
     }),
+    RedisModule,
   ],
   controllers: [MemberController],
   providers: [MemberService, MemberRepository, JwtStrategy],

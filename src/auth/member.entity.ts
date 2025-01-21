@@ -1,5 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { MemberDetail } from "./member-detail.entity";
+import { Topic } from "src/topic/topic.entity";
 
 @Entity()
 @Unique(['userId', 'name'])
@@ -54,4 +55,11 @@ export class Member extends BaseEntity {
         {cascade: true}
     )
     memberDetail: MemberDetail;
+
+    @OneToMany(
+        type => Topic, 
+        topic => topic.member, 
+        { eager:false }
+    )
+    topic: Topic[];
 }

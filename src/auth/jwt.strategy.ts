@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ExtractJwt, Strategy } from "passport-jwt";
@@ -19,7 +19,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         })
     }
 
+    private logger = new Logger('JWT strategy');
+
     async validate(payload) {
+        this.logger.log(`payload: ${payload}`);
         // const { userId, name } = payload;
         // const member: Member = await this.memberRepository.findOneBy({ userId });
 

@@ -4,6 +4,7 @@ import { typeORMConfig } from './configs/typeorm.config';
 import { MemberModule } from './auth/member.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
+import { TopicModule } from './topic/topic.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RedisModule } from './redis/redis.module';
     }),
     RedisModule,
     MemberModule,
+    TopicModule,
   ],
   controllers: [],
   providers: [],

@@ -16,9 +16,11 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         this.logger.log("init custom auth guard...");
-
+        
         const req = context.switchToHttp().getRequest();
         const token = req.headers['authorization']?.split(' ')[1];
+        
+        this.logger.log(`login token : ${token}`);
 
         if(!token) throw new BadRequestException('No token provided...');
 
