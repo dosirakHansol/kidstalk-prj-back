@@ -50,11 +50,7 @@ export class MemberRepository extends Repository<Member> {
             } else{
                 throw new InternalServerErrorException(`Sever Error : ${error.message}`);
             }
-
-            // this.responseDto.statusCode = HttpStatus.BAD_REQUEST;
-            // this.responseDto.message = `회원가입 실패 ${error}`;
         }
-
         return this.responseDto;
     }
 }

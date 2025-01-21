@@ -102,5 +102,40 @@ export class MemberService {
 
         return token
     }
+
+    // check refresh token then generate new token
+    async validateRefreshToken(refreshToken: string): Promise<ResponseDto> {
+        // Redis에 해당 refresh 토큰 있는지 확인
+        const userId = await this.redisService.get(refreshToken);
+
+        if(!!userId) {
+            // refresh token 존재
+            // 신규 Token 생성
+            const newAccessToken = await this.generateAccessToken(userId);
+            const newRefreshToken = await this.generateRefreshToken(userId);
+
+            // 기존 refresh token 삭제
+            await this.redisService.del(refreshToken);
+
+            // 신규 refresh token 저장
+            await this.redisService.set(
+                newRefreshToken, //key
+                userId, //value
+                this.configService.get("REDIS_CACHE_TTL") 
+            );
+
+            this.responseDto.statusCode = HttpStatus.OK;
+            this.responseDto.message = "토큰 재생성 성공";
+            this.responseDto.data = {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken
+            };
+
+            return this.responseDto;
+        } else{
+            // refresh token 없음
+            throw new BadRequestException("Not exist your refresh token...");
+        }
+    }
     // Token (E)
 }

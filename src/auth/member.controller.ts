@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Logger, Post, Req, UseGuar
 import { MemberSignInDto, MemberSignUpDto } from './dto/member-credential.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { MemberService } from './member.service';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Member } from './member.entity';
 import { GetMember } from './get-member-decorator';
 import { ResponseDto } from 'src/common/dto/response.dto';
@@ -38,9 +38,27 @@ export class MemberController {
     @Get('/test')
     @ApiOperation({ summary: "토큰 테스트", description: '토큰정보로 유저정보 가져오기' })
     @ApiBearerAuth()
-    // @UseGuards(AuthGuard())
     @UseGuards(CustomAuthGuard)
     test(@GetMember() member: Member) {
         console.log('member', member);
+    }
+
+    @Post('/refresh')
+    @ApiOperation({ summary: "토큰 재발급", description: '리프레시 토큰 확인 후 재발급' })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+            refreshToken: {
+                type: 'string',
+                description: 'The refresh token string',
+            },
+            },
+            required: ['refreshToken'],
+        },
+    })
+    getNewToken(@Body("refreshToken") refreshToken: string): Promise<ResponseDto> {
+        this.logger.log("refreshToken", refreshToken);
+        return this.memberService.validateRefreshToken(refreshToken);
     }
 }
