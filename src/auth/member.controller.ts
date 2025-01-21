@@ -62,6 +62,7 @@ export class MemberController {
     @UseGuards(CustomAuthGuard)
     test(@GetMember() member: Member) {
         console.log('member', member);
+        return member;
     }
 
     @Post('/refresh')

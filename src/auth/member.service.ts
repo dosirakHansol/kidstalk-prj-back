@@ -39,8 +39,8 @@ export class MemberService {
                 // 비밀번호도 맞는지 확인
                 
                 // 유저 토큰 생성
-                const accessToken = await this.generateAccessToken(userId);
-                const refreshToken = await this.generateRefreshToken(userId);
+                const accessToken = await this.generateAccessToken(user);
+                const refreshToken = await this.generateRefreshToken(user);
 
                 // Redis에 토큰 저장
                 // await this.redisService.set(
@@ -76,9 +76,12 @@ export class MemberService {
 
 
     // Token (S)
-    private async generateAccessToken(userId: string): Promise<string> {
+    private async generateAccessToken(member: Member): Promise<string> {
         const token = this.jwtService.sign(
-            { userId },
+            { 
+                userId: member.userId,
+                name: member.name
+            },
             {
                 secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
                 expiresIn: Number(
@@ -91,9 +94,12 @@ export class MemberService {
     }
 
     // refresh token 생성
-    private async generateRefreshToken(userId: string): Promise<string> {
+    private async generateRefreshToken(member: Member): Promise<string> {
         const token = this.jwtService.sign(
-            { userId },
+            { 
+                userId: member.userId,
+                name: member.name
+            },
             {
                 secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
                 expiresIn: Number(
@@ -112,9 +118,13 @@ export class MemberService {
 
         if(!!userId) {
             // refresh token 존재
+
+            // refresh 토큰에서 유저정보 가져오기
+            const user = await this.jwtService.verifyAsync(refreshToken, {secret: this.configService.get("JWT_REFRESH_TOKEN_SECRET")})
+
             // 신규 Token 생성
-            const newAccessToken = await this.generateAccessToken(userId);
-            const newRefreshToken = await this.generateRefreshToken(userId);
+            const newAccessToken = await this.generateAccessToken(user);
+            const newRefreshToken = await this.generateRefreshToken(user);
 
             // 기존 refresh token 삭제
             await this.redisService.del(refreshToken);
