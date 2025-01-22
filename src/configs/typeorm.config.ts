@@ -13,5 +13,6 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
         entities: [__dirname + '/../**/*.entity.{js,ts}'],
         synchronize: true,  // 개발 환경에서는 true로 설정, 프로덕션에서는 false로 설정하는 것이 좋음
         namingStrategy: new SnakeNamingStrategy(),
+        logging: true,
     };
 };

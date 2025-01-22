@@ -1,42 +1,34 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, MaxLength, MinLength } from "class-validator";
 
-export class TopicCreateDto {
-    // 주제이름
+export class BoardCreateDto {
     @IsString()
     @MinLength(4)
     @MaxLength(20)
     @ApiProperty({ 
         type: String, 
-        description: '주제 이름', 
+        description: '게시글 이름', 
         required: true, 
         example: 'test1234' 
     })
-    name: string;
+    title: string;
 
-    //주제 설명
     @IsString()
     @MinLength(4)
     @MaxLength(20)
     @ApiProperty({ 
         type: String, 
-        description: '주제 설명', 
+        description: '게시글 설명', 
         required: true, 
         example: 'test1234' 
     })
     description: string;
-}
 
-export class TopicSelectDto {
-    // 주제이름
-    @IsString()
-    @MinLength(4)
-    @MaxLength(20)
-    name: string;
-
-    //주제 설명
-    @IsString()
-    @MinLength(4)
-    @MaxLength(20)
-    description: string;
+    @ApiProperty({ 
+        type: Number, 
+        description: '주제 번호', 
+        required: true, 
+        example: 1
+    })
+    topicId: number;
 }

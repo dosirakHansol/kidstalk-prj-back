@@ -1,6 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { MemberDetail } from "./member-detail.entity";
 import { Topic } from "src/topic/topic.entity";
+import { Board } from "src/board/board.entity";
 
 @Entity()
 @Unique(['userId', 'name'])
@@ -23,19 +24,19 @@ export class Member extends BaseEntity {
 
     //지역
     @Column()
-    location: string = null;
+    location: string;
 
     //sns연동여부
-    @Column()
-    isSns: boolean = false;
+    @Column({ default: false })
+    isSns: boolean;
 
     //프로필공개여부
-    @Column()
-    isOpen: boolean = false;
+    @Column({ default: false })
+    isOpen: boolean;
 
     //탈퇴여부
-    @Column()
-    isDrop: boolean = false;
+    @Column({ default: false })
+    isDrop: boolean;
 
     //생성일시
     @CreateDateColumn({default: () => "now()::date + '30 day'::interval"})
@@ -62,4 +63,11 @@ export class Member extends BaseEntity {
         { eager:false }
     )
     topic: Topic[];
+
+    @OneToMany(
+        type => Board, 
+        board => board.member, 
+        { eager:false }
+    )
+    board: Board[];
 }

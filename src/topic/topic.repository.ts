@@ -1,7 +1,7 @@
 import { ConflictException, HttpStatus, Injectable, InternalServerErrorException, Logger } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { Topic } from "./topic.entity";
-import { TopicDto } from "./dto/topic.dto";
+import { TopicCreateDto } from "./dto/topic.dto";
 import { Member } from "src/auth/member.entity";
 import { ResponseDto } from "src/common/dto/response.dto";
 
@@ -14,7 +14,7 @@ export class TopicRepository extends Repository<Topic> {
     private logger = new Logger('TopicRepository');
 
     async createTopic(
-        topicDto: TopicDto,
+        topicDto: TopicCreateDto,
         member: Member
     ): Promise<ResponseDto> {
         const { name, description } = topicDto;

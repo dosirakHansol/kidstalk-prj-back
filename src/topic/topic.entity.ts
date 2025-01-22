@@ -1,5 +1,6 @@
 import { Member } from "src/auth/member.entity";
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Board } from "src/board/board.entity";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
 @Unique(['name'])
@@ -18,17 +19,28 @@ export class Topic extends BaseEntity {
     description: string;
 
     //삭제 여부
-    @Column()
-    isDel: boolean = false;
+    @Column({ default: false })
+    isDel: boolean;
+
+    //숨김 여부
+    @Column({ default: false })
+    isHidden: boolean;
 
     //생성일시
-    @CreateDateColumn({default: () => "NOW()"})
+    @CreateDateColumn({ default: () => "NOW()" })
     createAt: Date;
 
     //수정일시
-    @CreateDateColumn({default: () => "NOW()"})
+    @CreateDateColumn({ default: () => "NOW()" })
     updateAt: Date;
 
     @ManyToOne(type => Member, member => member.topic, {eager:false})
     member: Member;
+
+    @OneToMany(
+        type => Board, 
+        board => board.topic, 
+        { eager:false }
+    )
+    board: Board[];
 }

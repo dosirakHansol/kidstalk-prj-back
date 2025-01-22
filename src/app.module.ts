@@ -5,6 +5,7 @@ import { MemberModule } from './auth/member.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
 import { TopicModule } from './topic/topic.module';
+import { BoardModule } from './board/board.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TopicModule } from './topic/topic.module';
     RedisModule,
     MemberModule,
     TopicModule,
+    BoardModule,
   ],
   controllers: [],
   providers: [],

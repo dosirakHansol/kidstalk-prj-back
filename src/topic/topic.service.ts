@@ -3,7 +3,7 @@ import { TopicRepository } from './topic.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from './topic.entity';
 import { ResponseDto } from 'src/common/dto/response.dto';
-import { TopicDto } from './dto/topic.dto';
+import { TopicCreateDto } from './dto/topic.dto';
 import { Member } from 'src/auth/member.entity';
 
 @Injectable()
@@ -16,10 +16,16 @@ export class TopicService {
     private logger = new Logger('TopicService');
 
     async getAllTopic(page: number): Promise<ResponseDto> {
-        const topics = this.topicRepository.find({
-            take: 10, 
-            skip: page * 10
-        });
+        const topics = await this.topicRepository.find(
+            {
+                take: 10, 
+                skip: page * 10,
+                where: {
+                    isDel: false,
+                    isHidden: false,
+                }
+            },
+        );
         return new ResponseDto(
             HttpStatus.OK, 
             "주제 조회 성공", 
@@ -28,7 +34,7 @@ export class TopicService {
     }
 
     async createTopic(
-        topicDto: TopicDto,
+        topicDto: TopicCreateDto,
         member: Member
     ): Promise<ResponseDto> {
         return this.topicRepository.createTopic(topicDto, member);
