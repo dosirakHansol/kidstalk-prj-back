@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from './redis/redis.module';
 import { TopicModule } from './topic/topic.module';
 import { BoardModule } from './board/board.module';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BoardModule } from './board/board.module';
     MemberModule,
     TopicModule,
     BoardModule,
+    FileUploadModule,
   ],
   controllers: [],
   providers: [],

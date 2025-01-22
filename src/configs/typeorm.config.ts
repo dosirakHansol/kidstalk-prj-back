@@ -14,5 +14,6 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
         synchronize: true,  // 개발 환경에서는 true로 설정, 프로덕션에서는 false로 설정하는 것이 좋음
         namingStrategy: new SnakeNamingStrategy(),
         logging: true,
+        // dropSchema: true, //운영에선 false
     };
 };
