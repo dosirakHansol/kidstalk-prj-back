@@ -7,6 +7,7 @@ import { RedisModule } from './redis/redis.module';
 import { TopicModule } from './topic/topic.module';
 import { BoardModule } from './board/board.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
+import { BoardLikeModule } from './board-like/board-like.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FileUploadModule } from './file-upload/file-upload.module';
     TopicModule,
     BoardModule,
     FileUploadModule,
+    BoardLikeModule,
   ],
   controllers: [],
   providers: [],

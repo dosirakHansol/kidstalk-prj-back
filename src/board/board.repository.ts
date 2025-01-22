@@ -60,6 +60,7 @@ export class BoardRepository extends Repository<Board> {
                 'topic.name',
                 'member.id',
                 'member.name',
+                'member.location',
             ])
             .where('board.id = :boardId', { boardId })
             .getOne();

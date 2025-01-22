@@ -1,6 +1,7 @@
 import { Member } from "src/auth/member.entity";
+import { BoardLike } from "src/board-like/board-like.entity";
 import { Topic } from "src/topic/topic.entity";
-import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
 @Unique(['title'])
@@ -42,4 +43,11 @@ export class Board extends BaseEntity {
 
     @Column()
     topicId: number;
+
+    @OneToMany(
+        type => BoardLike, 
+        boardLike => boardLike.board, 
+        { eager:false }
+    )
+    boardLike: BoardLike[];
 }

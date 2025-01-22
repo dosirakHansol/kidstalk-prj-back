@@ -2,6 +2,7 @@ import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, OneToMany, On
 import { MemberDetail } from "./member-detail.entity";
 import { Topic } from "src/topic/topic.entity";
 import { Board } from "src/board/board.entity";
+import { BoardLike } from "src/board-like/board-like.entity";
 
 @Entity()
 @Unique(['userId', 'name'])
@@ -70,4 +71,11 @@ export class Member extends BaseEntity {
         { eager:false }
     )
     board: Board[];
+
+    @OneToMany(
+        type => BoardLike, 
+        boardLike => boardLike.member, 
+        { eager:false }
+    )
+    boardLike:BoardLike[];
 }
