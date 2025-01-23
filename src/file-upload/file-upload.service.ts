@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { ResponseDto } from 'src/common/dto/response.dto';
 
 @Injectable()
 export class FileUploadService {
@@ -9,6 +10,10 @@ export class FileUploadService {
             throw new BadRequestException();
         }
 
-        return file.path;
+        return new ResponseDto(
+            HttpStatus.CREATED, 
+            "파일 업로드 성공", 
+            { filePath: file.path }
+        );
     }
 }
