@@ -8,6 +8,7 @@ import { TopicModule } from './topic/topic.module';
 import { BoardModule } from './board/board.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { BoardLikeModule } from './board-like/board-like.module';
+import { BoardFileModule } from './board-file/board-file.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BoardLikeModule } from './board-like/board-like.module';
     BoardModule,
     FileUploadModule,
     BoardLikeModule,
+    BoardFileModule,
   ],
   controllers: [],
   providers: [],

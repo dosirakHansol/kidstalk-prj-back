@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, MaxLength, MinLength } from "class-validator";
+import { BoardFileUploadDto } from "src/board-file/dto/board-file.dto";
 
 export class BoardCreateDto {
     @IsString()
@@ -31,4 +32,11 @@ export class BoardCreateDto {
         example: 1
     })
     topicId: number;
+
+    @ApiProperty({ 
+        type: [BoardFileUploadDto], 
+        description: '업로드 할 파일 목록', 
+        required: false, 
+    })
+    fileList: BoardFileUploadDto[];
 }

@@ -17,22 +17,23 @@ export class BoardRepository extends Repository<Board> {
         boardDto: BoardCreateDto,
         member: Member
     ): Promise<ResponseDto> {
-        const { title, description, topicId } = boardDto;
+        const { title, description, topicId, fileList } = boardDto;
 
         const board = this.create({
             title,
             description,
             member,
-            topicId
+            topicId,
+            boardFile: fileList
         });
 
         try {
-            await this.save(board);
+            const saveResult = await this.save(board);
 
             return new ResponseDto(
                 HttpStatus.CREATED, 
                 "게시글 생성 성공", 
-                {}
+                { saveResult }
             );
         } catch (error) {
             this.logger.error(JSON.stringify(error));
@@ -50,6 +51,7 @@ export class BoardRepository extends Repository<Board> {
             .createQueryBuilder('board')
             .leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
             .leftJoinAndSelect('board.member', 'member') // Member 관계 연결
+            .leftJoinAndSelect('board.boardFile', 'boardFile') // boardFiles 관계 추가
             .select([
                 'board.id',
                 'board.title',
@@ -61,6 +63,8 @@ export class BoardRepository extends Repository<Board> {
                 'member.id',
                 'member.name',
                 'member.location',
+                'boardFile.filePath',
+                'boardFile.sort',
             ])
             .loadRelationCountAndMap('board.likesCount', 'board.boardLike')
             .where('board.id = :boardId', { boardId })
@@ -99,6 +103,7 @@ export class BoardRepository extends Repository<Board> {
                 'member.location',
             ])
             .loadRelationCountAndMap('board.likesCount', 'board.boardLike')
+            .loadRelationCountAndMap('board.filesCount', 'board.boardFile')
             .where('board.isDel = false AND board.isHidden = false')
             .limit(10)
             .offset(page * 10);

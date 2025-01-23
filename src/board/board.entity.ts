@@ -1,4 +1,5 @@
 import { Member } from "src/auth/member.entity";
+import { BoardFile } from "src/board-file/board-file.entity";
 import { BoardLike } from "src/board-like/board-like.entity";
 import { Topic } from "src/topic/topic.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
@@ -49,4 +50,11 @@ export class Board extends BaseEntity {
         { eager:false }
     )
     boardLike: BoardLike[];
+
+    @OneToMany(
+        type => BoardFile, 
+        boardFile => boardFile.board, 
+        { cascade: true, eager: false },
+    )
+    boardFile: BoardFile[];
 }

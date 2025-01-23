@@ -7,10 +7,12 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BoardRepository } from './board.repository';
+import { BoardFileRepository } from 'src/board-file/board-file.repository';
+import { BoardFile } from 'src/board-file/board-file.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Board]),
+    TypeOrmModule.forFeature([Board, BoardFile]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -24,6 +26,6 @@ import { BoardRepository } from './board.repository';
     }),
   ],
   controllers: [BoardController],
-  providers: [BoardService, BoardRepository]
+  providers: [BoardService, BoardRepository, BoardFileRepository]
 })
 export class BoardModule {}
