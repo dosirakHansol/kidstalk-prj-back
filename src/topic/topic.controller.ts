@@ -1,6 +1,6 @@
-import { Body, Controller, Get, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { TopicService } from './topic.service';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Topic } from './topic.entity';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { TopicCreateDto } from './dto/topic.dto';
@@ -15,18 +15,6 @@ export class TopicController {
 
     private logger = new Logger("TopicController");
 
-    @Get("/all/:page?")
-    @ApiOperation({ summary: "모든 주제 불러오기" })
-    @ApiParam({ name: 'page', type: Number, description: '페이지 넘버 (0부터 시작)' })
-    @ApiResponse({status: HttpStatus.OK, description: '응답 메시지 (data에 topic배열)', type: ResponseDto,})
-    getAllTopic(
-        @Param('page') page?: number
-    ): Promise<ResponseDto>
-    {
-        const pageNumber = page ? Number(page) : 0;
-        return this.topicService.getAllTopic(pageNumber);
-    }
-
     @Post("/create")
     @ApiOperation({ summary: "주제 생성" })
     @ApiBearerAuth()
@@ -36,5 +24,16 @@ export class TopicController {
         @GetMember() member: Member
     ): Promise<ResponseDto> {
         return this.topicService.createTopic(topicDto, member);
+    }
+
+    @Get()
+    @ApiOperation({ summary: "주제 목록 불러오기" })
+    @ApiQuery({ name: 'page', type: Number, description: '페이지 넘버 (0부터 시작, 현재 limit 없어서 0 넣으면 전체 조회됨)', required: false, default: 0 })
+    @ApiResponse({status: HttpStatus.OK, description: '응답 메시지 (data에 topic배열)', type: ResponseDto,})
+    getTopicList(
+        @Query('page') page: number = 0
+    ): Promise<ResponseDto>
+    {
+        return this.topicService.getTopicList(page);
     }
 }

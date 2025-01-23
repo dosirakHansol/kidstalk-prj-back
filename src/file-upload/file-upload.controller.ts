@@ -1,8 +1,9 @@
-import { Controller, HttpStatus, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, HttpStatus, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { FileUploadService } from './file-upload.service';
+import { CustomAuthGuard } from 'src/common/guard/custom-auth-guard';
 
 @Controller('file')
 export class FileUploadController {
@@ -24,6 +25,7 @@ export class FileUploadController {
         },
     })
     @ApiResponse({status: HttpStatus.OK, description: '업로드 결과', type: ResponseDto,})
+    // @UseGuards(CustomAuthGuard)
     uploadFile(@UploadedFile() file: Express.Multer.File) {
         console.log('file', file);
         return this.fileUploadService.fileUpload(file);

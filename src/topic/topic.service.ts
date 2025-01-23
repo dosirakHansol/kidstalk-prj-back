@@ -15,10 +15,10 @@ export class TopicService {
 
     private logger = new Logger('TopicService');
 
-    async getAllTopic(page: number): Promise<ResponseDto> {
+    async getTopicList(page: number): Promise<ResponseDto> {
         const topics = await this.topicRepository.find(
             {
-                take: 10, 
+                // take: 10, //limit
                 skip: page * 10,
                 where: {
                     isDel: false,

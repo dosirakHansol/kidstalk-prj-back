@@ -83,8 +83,8 @@ export class BoardRepository extends Repository<Board> {
         }
     }
 
-    async getAllBoard(page: number): Promise<ResponseDto> {
-        const boards = await this
+    async getBoardList(page: number, topicId: number, memberId: number): Promise<ResponseDto> {
+        const queryBuilder = this
             .createQueryBuilder('board')
             .leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
             .leftJoinAndSelect('board.member', 'member') // Member 관계 연결
@@ -101,8 +101,12 @@ export class BoardRepository extends Repository<Board> {
             .loadRelationCountAndMap('board.likesCount', 'board.boardLike')
             .where('board.isDel = false AND board.isHidden = false')
             .limit(10)
-            .offset(page * 10)
-            .getMany();
+            .offset(page * 10);
+        
+        if(!!topicId) queryBuilder.andWhere("topic.id = :topicId", { topicId });
+        if(!!memberId) queryBuilder.andWhere("member.id = :memberId", { memberId });
+
+        const boards = await queryBuilder.getMany();
 
         if(boards) {
             return new ResponseDto(

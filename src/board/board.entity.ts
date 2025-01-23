@@ -4,7 +4,6 @@ import { Topic } from "src/topic/topic.entity";
 import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
-@Unique(['title'])
 export class Board extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

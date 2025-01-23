@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BoardService } from './board.service';
 import { CustomAuthGuard } from 'src/common/guard/custom-auth-guard';
 import { GetMember } from 'src/auth/get-member-decorator';
@@ -18,7 +18,7 @@ export class BoardController {
     @ApiOperation({ summary: "게시글 생성" })
     @ApiBearerAuth()
     @UseGuards(CustomAuthGuard)
-    createTopic(
+    createBoard(
         @Body() boardCreateDto: BoardCreateDto,
         @GetMember() member: Member
     ): Promise<ResponseDto> {
@@ -36,16 +36,19 @@ export class BoardController {
         return this.boardService.getBoardById(boardId);
     }
 
-    @Get("/all/:page?")
-    @ApiOperation({ summary: "모든 게시글 불러오기" })
-    @ApiParam({ name: 'page', type: Number, description: '페이지 넘버 (0부터 시작)' })
+    @Get()
+    @ApiOperation({ summary: "게시글 목록 불러오기" })
+    @ApiQuery({ name: 'page', type: Number, description: '페이지 넘버 (0부터 시작)', required: false, default: 0 })
+    @ApiQuery({ name: 'topicId', type: Number, description: '주제 번호', required: false })
+    @ApiQuery({ name: 'memberId', type: Number, description: '유저(작성자) 번호', required: false })
     @ApiResponse({status: HttpStatus.OK, description: '응답 메시지 (data에 board배열)', type: ResponseDto,})
-    getAllTopic(
-        @Param('page') page?: number
+    getBoardList(
+        @Query("page") page: number = 0, //default = 0
+        @Query("topicId") topicId: number,
+        @Query("memberId") memberId: number
     ): Promise<ResponseDto>
-    {
-        const pageNumber = page ? Number(page) : 0;
-        return this.boardService.getAllBoard(pageNumber);
+    {   
+        return this.boardService.getBoardList(page, topicId, memberId);
     }
 
 }

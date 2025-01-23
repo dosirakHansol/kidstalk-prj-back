@@ -25,8 +25,8 @@ export class BoardService {
         return await this.boardRepository.getBoardById(boardId);
     }
 
-    async getAllBoard(page: number): Promise<ResponseDto> {
-        const boards = await this.boardRepository.getAllBoard(page);
+    async getBoardList(page: number, topicId: number, memberId: number): Promise<ResponseDto> {
+        const boards = await this.boardRepository.getBoardList(page, topicId, memberId);
         return new ResponseDto(
             HttpStatus.OK, 
             "게시글 조회 성공", 
