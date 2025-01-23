@@ -55,4 +55,15 @@ export class BoardLikeRepository extends Repository<BoardLike> {
             throw new InternalServerErrorException(`Sever Error : ${error.message}`);
         }
     }
+
+    //이미 같은게시글 좋아요 확인
+    async checkExistLike(
+        member: Member,
+        boardId: number
+    ):Promise<number> {
+        return await this.countBy({
+            boardId: boardId,
+            memberId: member.id
+        });
+    }
 }

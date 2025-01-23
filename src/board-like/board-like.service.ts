@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoardLikeRepository } from './board-like.repository';
 import { ResponseDto } from 'src/common/dto/response.dto';
@@ -15,7 +15,17 @@ export class BoardLikeService {
         member: Member,
         boardId: number
     ): Promise<ResponseDto> {
-        return this.boardLikeRepository.likeIn(member, boardId);
+        const existLikeCount = await this.boardLikeRepository.checkExistLike(member, boardId);
+
+        if(existLikeCount > 0) {
+            return new ResponseDto(
+                HttpStatus.CREATED, 
+                "게시글 좋아요 성공", 
+                {}
+            );
+        } else {
+            return this.boardLikeRepository.likeIn(member, boardId);
+        }
     }
 
     async likeOut(
