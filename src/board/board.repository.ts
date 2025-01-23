@@ -50,6 +50,7 @@ export class BoardRepository extends Repository<Board> {
             .createQueryBuilder('board')
             .leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
             .leftJoinAndSelect('board.member', 'member') // Member 관계 연결
+            .leftJoinAndSelect('board.boardLike', 'boardLike')
             .select([
                 'board.id',
                 'board.title',
@@ -61,9 +62,11 @@ export class BoardRepository extends Repository<Board> {
                 'member.id',
                 'member.name',
                 'member.location',
+                'COUNT(boardLike.id) as likesCount',
             ])
             .where('board.id = :boardId', { boardId })
-            .getOne();
+            .groupBy('board.id, topic.id, member.id')
+            .getRawOne();
 
         if(board) {
             if(board.isDel){
@@ -87,10 +90,12 @@ export class BoardRepository extends Repository<Board> {
             .createQueryBuilder('board')
             .leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
             .leftJoinAndSelect('board.member', 'member') // Member 관계 연결
+            .leftJoinAndSelect('board.boardLike', 'boardLike')
             .select([
                 'board.id',
                 'board.title',
                 'board.description',
+                'COUNT(boardLike.id) as likesCount',
                 'topic.id',
                 'topic.name',
                 'member.id',
@@ -98,9 +103,10 @@ export class BoardRepository extends Repository<Board> {
                 'member.location',
             ])
             .where('board.isDel = false AND board.isHidden = false')
+            .groupBy('board.id, topic.id, member.id')
             .limit(10)
             .offset(page * 10)
-            .getMany();
+            .getRawMany();
 
         if(boards) {
             return new ResponseDto(
