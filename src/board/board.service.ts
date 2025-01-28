@@ -5,12 +5,18 @@ import { BoardCreateDto } from './dto/board.dto';
 import { Member } from 'src/auth/member.entity';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { BoardFileRepository } from 'src/board-file/board-file.repository';
+import { RedisService } from 'src/redis/redis.service';
+import { ConfigService } from '@nestjs/config';
+import { BoardLikeService } from 'src/board-like/board-like.service';
 
 @Injectable()
 export class BoardService {
     constructor(
         @InjectRepository(BoardRepository) private boardRepository: BoardRepository,
         @InjectRepository(BoardFileRepository) private boardFileRepository: BoardFileRepository,
+        private boardLikeService: BoardLikeService,
+        private readonly configService: ConfigService,
+        private readonly redisService: RedisService,
     ) {}
 
     private logger = new Logger('BoardService');
@@ -23,7 +29,12 @@ export class BoardService {
     }
 
     async getBoardById(boardId: number): Promise<ResponseDto> {
-        return await this.boardRepository.getBoardById(boardId);
+        const res = await this.boardRepository.getBoardById(boardId);
+
+        //게시글 총 좋아요 카운트
+        res.data.board.likesCount = await this.boardLikeService.getBoardLikeCount(res.data.board.id, 0);
+
+        return res;
     }
 
     async getBoardList(page: number, topicId: number, memberId: number): Promise<ResponseDto> {
@@ -43,9 +54,10 @@ export class BoardService {
             if (board.filesCount > 0) {
                 board.fileList = await this.boardFileRepository.findBy({ boardId: board.id });
             }
+            //게시글 총 좋아요 카운트
+            board.likesCount = await this.boardLikeService.getBoardLikeCount(board.id, 0);
         }
 
         return response;
     }
-
 }

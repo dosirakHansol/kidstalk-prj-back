@@ -35,6 +35,10 @@ export class Board extends BaseEntity {
     @CreateDateColumn({default: () => "NOW()"})
     updateAt: Date;
 
+    //조회수
+    @Column({ default: 0 })
+    readCnt: number;
+
     @ManyToOne(type => Member, member => member.board, {eager:false})
     member: Member;
 

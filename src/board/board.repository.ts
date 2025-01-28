@@ -66,7 +66,7 @@ export class BoardRepository extends Repository<Board> {
                 'boardFile.filePath',
                 'boardFile.sort',
             ])
-            .loadRelationCountAndMap('board.likesCount', 'board.boardLike')
+            // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //따로 조회로 옮김
             .where('board.id = :boardId', { boardId })
             .getOne();
 
@@ -102,7 +102,7 @@ export class BoardRepository extends Repository<Board> {
                 'member.name',
                 'member.location',
             ])
-            .loadRelationCountAndMap('board.likesCount', 'board.boardLike')
+            // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //따로 조회로 옮김
             .loadRelationCountAndMap('board.filesCount', 'board.boardFile')
             .where('board.isDel = false AND board.isHidden = false')
             .limit(10)

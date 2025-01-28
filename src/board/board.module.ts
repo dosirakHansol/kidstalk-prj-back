@@ -9,10 +9,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BoardRepository } from './board.repository';
 import { BoardFileRepository } from 'src/board-file/board-file.repository';
 import { BoardFile } from 'src/board-file/board-file.entity';
+import { BoardLikeRepository } from 'src/board-like/board-like.repository';
+import { BoardLike } from 'src/board-like/board-like.entity';
+import { RedisModule } from 'src/redis/redis.module';
+import { BoardLikeService } from 'src/board-like/board-like.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Board, BoardFile]),
+    TypeOrmModule.forFeature([Board, BoardLike, BoardFile]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -24,8 +28,9 @@ import { BoardFile } from 'src/board-file/board-file.entity';
       }),
       inject: [ConfigService],
     }),
+    RedisModule,
   ],
   controllers: [BoardController],
-  providers: [BoardService, BoardRepository, BoardFileRepository]
+  providers: [BoardService, BoardRepository, BoardLikeService, BoardLikeRepository, BoardFileRepository]
 })
 export class BoardModule {}
