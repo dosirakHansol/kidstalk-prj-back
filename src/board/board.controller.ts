@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpStatus, Logger, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpStatus, Logger, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BoardService } from './board.service';
 import { CustomAuthGuard } from 'src/common/guard/custom-auth-guard';
 import { GetMember } from 'src/auth/get-member-decorator';
@@ -51,4 +51,13 @@ export class BoardController {
         return this.boardService.getBoardList(page, topicId, memberId);
     }
 
+    @Patch("/:boardId")
+    @ApiOperation({ summary: "게시글 조회수 증가" })
+    @ApiResponse({status: HttpStatus.OK, description: '게시글 조회수 증가 성공 응답', type: ResponseDto,})
+    @ApiParam({ name: 'boardId', type: Number, description: '게시글 번호' })
+    increaseReadCount(
+        @Param("boardId") boardId: number
+    ): Promise<ResponseDto> {
+        return this.boardService.increaseReadCount(boardId);
+    }
 }

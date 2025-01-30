@@ -1,4 +1,4 @@
-import { ConflictException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, HttpStatus, Injectable, InternalServerErrorException, Logger, NotFoundException } from "@nestjs/common";
 import { DataSource, Repository } from "typeorm";
 import { Member } from "src/auth/member.entity";
 import { ResponseDto } from "src/common/dto/response.dto";
@@ -58,6 +58,7 @@ export class BoardRepository extends Repository<Board> {
                 'board.description',
                 'board.isDel',
                 'board.isHidden',
+                'board.readCnt',
                 'topic.id',
                 'topic.name',
                 'member.id',
@@ -66,7 +67,7 @@ export class BoardRepository extends Repository<Board> {
                 'boardFile.filePath',
                 'boardFile.sort',
             ])
-            // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //따로 조회로 옮김
+            // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //총 좋아요 개수, 따로 조회로 옮김
             .where('board.id = :boardId', { boardId })
             .getOne();
 
@@ -96,13 +97,14 @@ export class BoardRepository extends Repository<Board> {
                 'board.id',
                 'board.title',
                 'board.description',
+                'board.readCnt',
                 'topic.id',
                 'topic.name',
                 'member.id',
                 'member.name',
                 'member.location',
             ])
-            // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //따로 조회로 옮김
+            // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //총 좋아요 개수, 따로 조회로 옮김
             .loadRelationCountAndMap('board.filesCount', 'board.boardFile')
             .where('board.isDel = false AND board.isHidden = false')
             .limit(10)
@@ -121,6 +123,20 @@ export class BoardRepository extends Repository<Board> {
             );
         } else{
             throw new NotFoundException("더이상 게시글이 없습니다.");
+        }
+    }
+
+    async increaseReadCount(boardId: number): Promise<ResponseDto>{
+        try {
+            await this.update(boardId, { readCnt: () => "readCnt + 1" });
+
+            return new ResponseDto(
+                HttpStatus.OK, 
+                "조회수 증가 성공", 
+                {}
+            );
+        } catch (error) {
+            throw new BadRequestException("알수없는 오류 발생.");
         }
     }
 }

@@ -60,4 +60,8 @@ export class BoardService {
 
         return response;
     }
+
+    async increaseReadCount(boardId: number): Promise<ResponseDto>{
+        return await this.boardRepository.increaseReadCount(boardId);
+    }
 }
