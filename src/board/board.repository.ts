@@ -108,7 +108,8 @@ export class BoardRepository extends Repository<Board> {
             .loadRelationCountAndMap('board.filesCount', 'board.boardFile')
             .where('board.isDel = false AND board.isHidden = false')
             .limit(10)
-            .offset(page * 10);
+            .offset(page * 10)
+            .orderBy("board.id", "DESC");
         
         if(!!topicId) queryBuilder.andWhere("topic.id = :topicId", { topicId });
         if(!!memberId) queryBuilder.andWhere("member.id = :memberId", { memberId });

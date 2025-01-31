@@ -9,6 +9,8 @@ import { BoardModule } from './board/board.module';
 import { FileUploadModule } from './file-upload/file-upload.module';
 import { BoardLikeModule } from './board-like/board-like.module';
 import { BoardFileModule } from './board-file/board-file.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -19,6 +21,9 @@ import { BoardFileModule } from './board-file/board-file.module';
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => typeORMConfig(configService),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
     }),
     RedisModule,
     MemberModule,

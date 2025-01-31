@@ -10,10 +10,12 @@ export class FileUploadService {
             throw new BadRequestException();
         }
 
+        const filePath = '/' + file.filename;
+
         return new ResponseDto(
             HttpStatus.CREATED, 
             "파일 업로드 성공", 
-            { filePath: file.path }
+            { filePath }
         );
     }
 }
