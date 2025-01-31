@@ -116,7 +116,7 @@ export class BoardRepository extends Repository<Board> {
             .orderBy("board.id", "DESC");
         
         if(!!topicId) queryBuilder.andWhere("topic.id = :topicId", { topicId });
-        if(!!memberId) queryBuilder.andWhere("member.id = :memberId", { writerId });
+        if(!!writerId) queryBuilder.andWhere("member.id = :memberId", { writerId });
 
         const boards = await queryBuilder.getMany();
 
