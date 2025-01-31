@@ -36,6 +36,9 @@ export class BoardService {
         //게시글 총 좋아요 카운트
         res.data.board.likesCount = await this.boardLikeService.getBoardLikeCount(res.data.board.id, 0);
 
+        //좋아요를 이미 눌렀는지 여부
+        res.data.board.isLiked = res.data.board.boardLike.length > 0 ? true : false;
+
         return res;
     }
 
@@ -60,6 +63,9 @@ export class BoardService {
             }
             //게시글 총 좋아요 카운트
             board.likesCount = await this.boardLikeService.getBoardLikeCount(board.id, 0);
+
+            //좋아요를 이미 눌렀는지 여부
+            board.isLiked = board.boardLike.length > 0 ? true : false;
         }
 
         return response;
