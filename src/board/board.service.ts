@@ -28,8 +28,10 @@ export class BoardService {
         return this.boardRepository.createBoard(boardDto, member);
     }
 
-    async getBoardById(boardId: number): Promise<ResponseDto> {
-        const res = await this.boardRepository.getBoardById(boardId);
+    async getBoardById(boardId: number, member: Member): Promise<ResponseDto> {
+        const memberId = !member ? 0 : member.id;
+
+        const res = await this.boardRepository.getBoardById(boardId, memberId);
 
         //게시글 총 좋아요 카운트
         res.data.board.likesCount = await this.boardLikeService.getBoardLikeCount(res.data.board.id, 0);
@@ -37,9 +39,11 @@ export class BoardService {
         return res;
     }
 
-    async getBoardList(page: number, topicId: number, memberId: number): Promise<ResponseDto> {
+    async getBoardList(page: number, topicId: number, writerId: number, member: Member): Promise<ResponseDto> {
+        const memberId = !member ? 0 : member.id;
+
         // 게시글 기본정보 가져오기
-        const response = await this.boardRepository.getBoardList(page, topicId, memberId);
+        const response = await this.boardRepository.getBoardList(page, topicId, writerId, memberId);
 
         // 게시글 파일 가져오기
         // foreach는 비동기 작업 수행이 잘안됨...

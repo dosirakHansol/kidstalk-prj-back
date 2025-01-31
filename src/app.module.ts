@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './configs/typeorm.config';
 import { MemberModule } from './auth/member.module';
@@ -11,6 +11,8 @@ import { BoardLikeModule } from './board-like/board-like.module';
 import { BoardFileModule } from './board-file/board-file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { TokenMiddleware } from './common/middleware/token.middleware';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -20,6 +22,16 @@ import { join } from 'path';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => typeORMConfig(configService),
+      inject: [ConfigService],
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+        },
+      }),
       inject: [ConfigService],
     }),
     ServeStaticModule.forRoot({
@@ -36,4 +48,10 @@ import { join } from 'path';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TokenMiddleware)
+      .forRoutes('board'); // '/board' 경로에 대해서만 미들웨어 적용
+  }
+}

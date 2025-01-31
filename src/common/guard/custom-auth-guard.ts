@@ -12,7 +12,7 @@ export class CustomAuthGuard extends AuthGuard('jwt') {
         super();
     }
 
-    private logger = new Logger();
+    private logger = new Logger("CustomAuthGuard");
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         this.logger.log("init custom auth guard...");

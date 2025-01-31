@@ -46,12 +46,13 @@ export class BoardRepository extends Repository<Board> {
         }
     }
 
-    async getBoardById(boardId: number): Promise<ResponseDto> {
+    async getBoardById(boardId: number, memberId: number): Promise<ResponseDto> {
         const board = await this
             .createQueryBuilder('board')
             .leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
             .leftJoinAndSelect('board.member', 'member') // Member 관계 연결
             .leftJoinAndSelect('board.boardFile', 'boardFile') // boardFiles 관계 추가
+            .leftJoin('board.boardLike', 'boardlike', 'boardlike.boardId = board.id AND boardlike.memberId = :memberId', { memberId }) // 좋아요 여부 확인용
             .select([
                 'board.id',
                 'board.title',
@@ -66,6 +67,7 @@ export class BoardRepository extends Repository<Board> {
                 'member.location',
                 'boardFile.filePath',
                 'boardFile.sort',
+                'boardlike.id',
             ])
             // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //총 좋아요 개수, 따로 조회로 옮김
             .where('board.id = :boardId', { boardId })
@@ -88,11 +90,12 @@ export class BoardRepository extends Repository<Board> {
         }
     }
 
-    async getBoardList(page: number, topicId: number, memberId: number): Promise<ResponseDto> {
+    async getBoardList(page: number, topicId: number, writerId: number, memberId: number): Promise<ResponseDto> {
         const queryBuilder = this
             .createQueryBuilder('board')
             .leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
             .leftJoinAndSelect('board.member', 'member') // Member 관계 연결
+            .leftJoin('board.boardLike', 'boardlike', 'boardlike.boardId = board.id AND boardlike.memberId = :memberId', { memberId }) // 좋아요 여부 확인용
             .select([
                 'board.id',
                 'board.title',
@@ -103,6 +106,7 @@ export class BoardRepository extends Repository<Board> {
                 'member.id',
                 'member.name',
                 'member.location',
+                'boardlike.id',
             ])
             // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //총 좋아요 개수, 따로 조회로 옮김
             .loadRelationCountAndMap('board.filesCount', 'board.boardFile')
@@ -112,7 +116,7 @@ export class BoardRepository extends Repository<Board> {
             .orderBy("board.id", "DESC");
         
         if(!!topicId) queryBuilder.andWhere("topic.id = :topicId", { topicId });
-        if(!!memberId) queryBuilder.andWhere("member.id = :memberId", { memberId });
+        if(!!memberId) queryBuilder.andWhere("member.id = :memberId", { writerId });
 
         const boards = await queryBuilder.getMany();
 
