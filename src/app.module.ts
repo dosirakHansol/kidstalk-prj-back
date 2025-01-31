@@ -13,6 +13,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { TokenMiddleware } from './common/middleware/token.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { JwtModule } from '@nestjs/jwt';
     FileUploadModule,
     BoardLikeModule,
     BoardFileModule,
+    LocationModule,
   ],
   controllers: [],
   providers: [],
