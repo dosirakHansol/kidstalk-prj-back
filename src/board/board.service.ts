@@ -1,7 +1,7 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BoardRepository } from './board.repository';
-import { BoardCreateDto } from './dto/board.dto';
+import { BoardCreateDto, BoardEditDto } from './dto/board.dto';
 import { Member } from 'src/auth/member.entity';
 import { ResponseDto } from 'src/common/dto/response.dto';
 import { BoardFileRepository } from 'src/board-file/board-file.repository';
@@ -71,7 +71,48 @@ export class BoardService {
         return response;
     }
 
-    async increaseReadCount(boardId: number): Promise<ResponseDto>{
+    async getBoardListCount(topicId: number, writerId: number, member: Member): Promise<ResponseDto> {
+        this.logger.log("getBoardListCount..");
+        const memberId = !member ? 0 : member.id;
+
+        // 게시글 기본정보 가져오기
+        return await this.boardRepository.getBoardListCount(topicId, writerId, memberId);
+    }
+
+    async increaseReadCount(boardId: number, member: Member): Promise<ResponseDto>{
+        // TODO 중복 카운팅 방지
+        // const cacheKey = `impression:${userId}:${postId}:${type}`;
+        // const isAlreadyCounted = await this.redisService.get(cacheKey);
+        
+        // if (isAlreadyCounted) {
+        // return;
+        // }
+
         return await this.boardRepository.increaseReadCount(boardId);
+    }
+
+    async editBoard(member: Member, boardId: number, boardEditDto: BoardEditDto) {
+        //게시글 작성자랑 맞는지 확인
+        const { memberId } = await this.boardRepository.findOneBy({id: boardId});
+
+        this.logger.log(`writer Id : ${memberId} and requester id : ${member.id}`);
+
+        if(!memberId) {
+            throw new NotFoundException("게시글을 찾을 수 없습니다...");
+        } else if(memberId != member.id) {
+            throw new UnauthorizedException("게시글 수정 권한이 없습니다...");
+        } else{
+            //게시글 수정 로직
+            //1.타이틀 수정
+            
+            //2.내용수정
+            //3.사진수정
+        }
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "게시글 수정 성공", 
+            {}
+        );
     }
 }

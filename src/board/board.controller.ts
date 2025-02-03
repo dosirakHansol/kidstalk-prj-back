@@ -4,7 +4,7 @@ import { BoardService } from './board.service';
 import { CustomAuthGuard } from 'src/common/guard/custom-auth-guard';
 import { GetMember } from 'src/auth/get-member-decorator';
 import { Member } from 'src/auth/member.entity';
-import { BoardCreateDto } from './dto/board.dto';
+import { BoardCreateDto, BoardEditDto } from './dto/board.dto';
 import { ResponseDto } from 'src/common/dto/response.dto';
 
 @Controller('board')
@@ -55,13 +55,47 @@ export class BoardController {
         return this.boardService.getBoardList(page, topicId, writerId, member);
     }
 
+    @Get("/count/all")
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "게시글 목록 개수 불러오기" })
+    @ApiQuery({ name: 'topicId', type: Number, description: '주제 번호', required: false })
+    @ApiQuery({ name: 'writerId', type: Number, description: '유저(작성자) 번호', required: false })
+    @ApiResponse({status: HttpStatus.OK, description: '응답 메시지 (data에 board배열)', type: ResponseDto,})
+    getBoardListCount(
+        @GetMember() member: Member,
+        @Query("topicId") topicId: number,
+        @Query("writerId") writerId: number
+    ): Promise<ResponseDto>
+    {   
+        this.logger.log("getBoardListCount..");
+        return this.boardService.getBoardListCount(topicId, writerId, member);
+    }
+
     @Patch("/:boardId")
+    @ApiBearerAuth()
     @ApiOperation({ summary: "게시글 조회수 증가" })
     @ApiResponse({status: HttpStatus.OK, description: '게시글 조회수 증가 성공 응답', type: ResponseDto,})
     @ApiParam({ name: 'boardId', type: Number, description: '게시글 번호' })
     increaseReadCount(
+        @GetMember() member: Member,
         @Param("boardId") boardId: number
     ): Promise<ResponseDto> {
-        return this.boardService.increaseReadCount(boardId);
+        return this.boardService.increaseReadCount(boardId, member);
+    }
+
+    @Patch("/edit/:boardId")
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "게시글 수정" })
+    @ApiResponse({status: HttpStatus.OK, description: '게시글 수정 성공 응답', type: ResponseDto,})
+    @ApiParam({ name: 'boardId', type: Number, description: '게시글 번호' })
+    @UseGuards(CustomAuthGuard)
+    editBoard(
+        @GetMember() member: Member,
+        @Param("boardId") boardId: number,
+        @Body() boardEditDto: BoardEditDto,
+    ): Promise<ResponseDto> {
+        this.logger.log(`member: ${JSON.stringify(member)}, boardId: ${boardId}, boardEditDto: ${JSON.stringify(boardEditDto)}`);
+
+        return this.boardService.editBoard(member, boardId, boardEditDto);
     }
 }
