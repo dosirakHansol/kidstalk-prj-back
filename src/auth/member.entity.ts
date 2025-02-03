@@ -5,18 +5,17 @@ import { Board } from "src/board/board.entity";
 import { BoardLike } from "src/board-like/board-like.entity";
 
 @Entity()
-@Unique(['userId', 'name'])
 export class Member extends BaseEntity {
     //회원 고유번호
     @PrimaryGeneratedColumn()
     id: number;
 
     //로그인시 입력 아이디
-    @Column({length: 20})
+    @Column({length: 20, unique: true})
     userId: string;
 
     //닉네임
-    @Column({length: 20})
+    @Column({length: 20, unique: true})
     name: string;
 
     //비밀번호

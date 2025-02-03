@@ -16,7 +16,6 @@ export class Board extends BaseEntity {
 
     //게시글 설명
     @Column()
-    @Column({length: 20})
     description: string;
 
     //삭제 여부
@@ -41,6 +40,9 @@ export class Board extends BaseEntity {
 
     @ManyToOne(type => Member, member => member.board, {eager:false})
     member: Member;
+
+    @Column()
+    memberId: number;
 
     @ManyToOne(type => Topic, topic => topic.board, {eager:false})
     topic: Topic;
