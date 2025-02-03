@@ -28,7 +28,7 @@ export class BoardRepository extends Repository<Board> {
         });
 
         try {
-            const saveResult = await this.save(board);
+            const saveResult = await this.insert(board); //save -> insert로 변경
 
             return new ResponseDto(
                 HttpStatus.CREATED, 

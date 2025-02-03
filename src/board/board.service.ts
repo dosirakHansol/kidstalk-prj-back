@@ -104,8 +104,11 @@ export class BoardService {
         } else{
             //게시글 수정 로직
             //1.타이틀 수정
-            
             //2.내용수정
+            this.boardRepository.update(
+                boardId, 
+                {title: boardEditDto.title, description: boardEditDto.description}
+            );
             //3.사진수정
         }
 
