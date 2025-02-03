@@ -37,6 +37,7 @@ import { LocationModule } from './location/location.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
     }),
     RedisModule,
     MemberModule,

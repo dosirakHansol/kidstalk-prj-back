@@ -25,6 +25,6 @@ import { FileUploadService } from './file-upload.service';
     }),
   ],
   controllers: [FileUploadController],
-  providers: [FileUploadService]
+  providers: [FileUploadService, MulterConfigService]
 })
 export class FileUploadModule {}
