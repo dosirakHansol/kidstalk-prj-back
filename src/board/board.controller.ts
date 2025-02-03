@@ -14,6 +14,27 @@ export class BoardController {
     
     private logger = new Logger("BoardController");
 
+    @Post("/temp")
+    @ApiOperation({ summary: "임시 게시글 생성/수정" })
+    @ApiBearerAuth()
+    @UseGuards(CustomAuthGuard)
+    createTempBoardData(
+        @Body() boardCreateDto: BoardCreateDto,
+        @GetMember() member: Member
+    ): Promise<ResponseDto> {
+        return this.boardService.createTempBoardData(boardCreateDto, member);
+    }
+
+    @Get("/temp")
+    @ApiOperation({ summary: "임시 게시글 조회" })
+    @ApiBearerAuth()
+    @UseGuards(CustomAuthGuard)
+    getTempBoardData(
+        @GetMember() member: Member,
+    ): Promise<ResponseDto> {
+        return this.boardService.getTempBoardData(member);
+    }
+
     @Post("/create")
     @ApiOperation({ summary: "게시글 생성" })
     @ApiBearerAuth()
@@ -35,6 +56,7 @@ export class BoardController {
         @Param('boardId') boardId: number
     ): Promise<ResponseDto>
     {   
+        this.logger.log(`boardId : ${boardId}`);
         return this.boardService.getBoardById(boardId, member);
     }
 

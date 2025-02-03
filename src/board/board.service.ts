@@ -21,6 +21,37 @@ export class BoardService {
 
     private logger = new Logger('BoardService');
 
+    async createTempBoardData(
+        boardCreateDto: BoardCreateDto, 
+        member: Member
+    ): Promise<ResponseDto> {
+        //기존 임시저장 데이터가있다면 삭제
+        this.redisService.del(`temp_board_${member.id}`);
+
+        this.redisService.setJsonData(
+            `temp_board_${member.id}`,
+            boardCreateDto
+        );
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "게시글 임시저장 성공", 
+            {}
+        );
+    }
+
+    async getTempBoardData(
+        member: Member
+    ): Promise<ResponseDto> {
+        const tempBoard = await this.redisService.getJsonData(`temp_board_${member.id}`);
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "임시 게시글 조회 성공", 
+            { tempBoard }
+        );
+    }
+
     async createBoard(
         boardDto: BoardCreateDto,
         member: Member
