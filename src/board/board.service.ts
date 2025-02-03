@@ -135,6 +135,26 @@ export class BoardService {
         );
     }
 
+    async hideBoard(member: Member, boardId: number): Promise<ResponseDto>{
+        //게시글 작성자랑 맞는지 확인
+        await this.checkBoardAuthorization(member, boardId);
+        
+        //게시글 삭제 -> isDel = true
+        this.boardRepository.update(
+            boardId, 
+            { 
+                isHidden: true ,
+                updateAt: () => "NOW()"
+            }
+        );
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "게시글 숨김 성공", 
+            {}
+        );
+    }
+
     async checkBoardAuthorization(member: Member, boardId: number) {
         //게시글 작성자랑 맞는지 확인
         const { memberId } = await this.boardRepository.findOneBy({id: boardId});

@@ -5,7 +5,26 @@ export class BoardFileUploadDto {
     @IsString()
     @ApiProperty({ 
         type: String, 
-        description: '파일 저장경로', 
+        description: '파일 저장경로(이름)', 
+        required: true, 
+    })
+    filePath: string;
+
+    @IsNumber()
+    @ApiProperty({ 
+        type: Number, 
+        description: '정렬 순서', 
+        required: true, 
+        example: 1
+    })
+    sort: number;
+}
+
+export class BoardFileEditDto {
+    @IsString()
+    @ApiProperty({ 
+        type: String, 
+        description: '파일 저장경로(이름)', 
         required: true, 
     })
     filePath: string;

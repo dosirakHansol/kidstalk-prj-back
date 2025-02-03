@@ -64,13 +64,14 @@ export class BoardEditDto {
     })
     description: string;
 
-    @ApiProperty({ 
-        type: Number, 
-        description: '주제 번호', 
-        required: true, 
-        example: 1
-    })
-    topicId: number;
+    // 게시글 수정에서 필요한지..?
+    // @ApiProperty({ 
+    //     type: Number, 
+    //     description: '주제 번호', 
+    //     required: true, 
+    //     example: 1
+    // })
+    // topicId: number;
 
     @ApiProperty({ 
         type: [BoardFileUploadDto], 
