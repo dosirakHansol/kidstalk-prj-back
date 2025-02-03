@@ -98,4 +98,17 @@ export class BoardController {
 
         return this.boardService.editBoard(member, boardId, boardEditDto);
     }
+
+    @Patch("/delete/:boardId")
+    @ApiBearerAuth()
+    @ApiOperation({ summary: "게시글 삭제" })
+    @ApiResponse({status: HttpStatus.OK, description: '게시글 삭제 성공 응답', type: ResponseDto,})
+    @ApiParam({ name: 'boardId', type: Number, description: '게시글 번호' })
+    @UseGuards(CustomAuthGuard)
+    deleteBoard(
+        @GetMember() member: Member,
+        @Param("boardId") boardId: number,
+    ): Promise<ResponseDto> {
+        return this.boardService.deleteBoard(member, boardId);
+    }
 }

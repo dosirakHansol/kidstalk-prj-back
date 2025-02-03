@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from './configs/typeorm.config';
 import { MemberModule } from './auth/member.module';
@@ -54,6 +54,8 @@ export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(TokenMiddleware)
-      .forRoutes('board'); // '/board' 경로에 대해서만 미들웨어 적용
+      .forRoutes(
+        {path: '/board/:boardId', method: RequestMethod.GET}, 
+        {path: '/board', method: RequestMethod.GET});
   }
 }

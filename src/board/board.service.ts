@@ -80,7 +80,7 @@ export class BoardService {
     }
 
     async increaseReadCount(boardId: number, member: Member): Promise<ResponseDto>{
-        // TODO 중복 카운팅 방지
+        // TODO 중복 카운팅 방지? 필요한지...
         // const cacheKey = `impression:${userId}:${postId}:${type}`;
         // const isAlreadyCounted = await this.redisService.get(cacheKey);
         
@@ -91,7 +91,51 @@ export class BoardService {
         return await this.boardRepository.increaseReadCount(boardId);
     }
 
-    async editBoard(member: Member, boardId: number, boardEditDto: BoardEditDto) {
+    async editBoard(member: Member, boardId: number, boardEditDto: BoardEditDto): Promise<ResponseDto>{
+        //게시글 작성자랑 맞는지 확인
+        await this.checkBoardAuthorization(member, boardId);
+        
+        //게시글 수정 로직
+        //1.타이틀 수정
+        //2.내용수정
+        this.boardRepository.update(
+            boardId, 
+            { 
+                title: boardEditDto.title, 
+                description: boardEditDto.description,
+                updateAt: () => "NOW()"
+            }
+        );
+        //3.사진수정
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "게시글 수정 성공", 
+            {}
+        );
+    }
+
+    async deleteBoard(member: Member, boardId: number): Promise<ResponseDto>{
+        //게시글 작성자랑 맞는지 확인
+        await this.checkBoardAuthorization(member, boardId);
+        
+        //게시글 삭제 -> isDel = true
+        this.boardRepository.update(
+            boardId, 
+            { 
+                isDel: true ,
+                updateAt: () => "NOW()"
+            }
+        );
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "게시글 삭제 성공", 
+            {}
+        );
+    }
+
+    async checkBoardAuthorization(member: Member, boardId: number) {
         //게시글 작성자랑 맞는지 확인
         const { memberId } = await this.boardRepository.findOneBy({id: boardId});
 
@@ -100,22 +144,9 @@ export class BoardService {
         if(!memberId) {
             throw new NotFoundException("게시글을 찾을 수 없습니다...");
         } else if(memberId != member.id) {
-            throw new UnauthorizedException("게시글 수정 권한이 없습니다...");
+            throw new UnauthorizedException("게시글 관리 권한이 없습니다...");
         } else{
-            //게시글 수정 로직
-            //1.타이틀 수정
-            //2.내용수정
-            this.boardRepository.update(
-                boardId, 
-                {title: boardEditDto.title, description: boardEditDto.description}
-            );
-            //3.사진수정
+            return true;
         }
-
-        return new ResponseDto(
-            HttpStatus.OK, 
-            "게시글 수정 성공", 
-            {}
-        );
     }
 }
