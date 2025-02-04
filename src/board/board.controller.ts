@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Logger, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Logger, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BoardService } from './board.service';
 import { CustomAuthGuard } from 'src/common/guard/custom-auth-guard';
@@ -15,7 +15,7 @@ export class BoardController {
     private logger = new Logger("BoardController");
 
     @Post("/temp")
-    @ApiOperation({ summary: "임시 게시글 생성/수정" })
+    @ApiOperation({ summary: "임시 게시글 생성/수정", description: "임시 저장 게시글의 경우, 유저 고유번호와 조합되어 최대 하나까지만 저장됩니다.(추가 저장시 기존 데이터 삭제)" })
     @ApiBearerAuth()
     @UseGuards(CustomAuthGuard)
     createTempBoardData(
@@ -26,13 +26,23 @@ export class BoardController {
     }
 
     @Get("/temp")
-    @ApiOperation({ summary: "임시 게시글 조회" })
+    @ApiOperation({ summary: "임시 게시글 조회", description: "임시 저장 게시글의 경우, 유저 고유번호와 조합되어 조회됩니다." })
     @ApiBearerAuth()
     @UseGuards(CustomAuthGuard)
     getTempBoardData(
         @GetMember() member: Member,
     ): Promise<ResponseDto> {
         return this.boardService.getTempBoardData(member);
+    }
+
+    @Delete("/temp")
+    @ApiOperation({ summary: "임시 게시글 삭제" })
+    @ApiBearerAuth()
+    @UseGuards(CustomAuthGuard)
+    deleteTempBoardData(
+        @GetMember() member: Member,
+    ): Promise<ResponseDto> {
+        return this.boardService.deleteTempBoardData(member);
     }
 
     @Post("/create")

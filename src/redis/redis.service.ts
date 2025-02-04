@@ -36,7 +36,11 @@ export class RedisService {
    * @param value 저장할 JSON 데이터
    */
   async setJsonData(key: string, value: any, path: string = '$'): Promise<void> {
-    await this.client.call('JSON.SET', key, path, JSON.stringify(value));
+    // await this.client.call('JSON.SET', key, path, JSON.stringify(value));
+    await this.client.pipeline()
+      .call('JSON.SET', key, path, JSON.stringify(value)) // JSON 데이터 저장
+      .call('EXPIRE', key, 3600 * 24 * 7) //  만료(7일) 설정
+      .exec();
   }
 
   /**

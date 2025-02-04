@@ -27,8 +27,8 @@ export class BoardService {
         boardCreateDto: BoardCreateDto, 
         member: Member
     ): Promise<ResponseDto> {
-        //기존 임시저장 데이터가있다면 삭제
-        this.redisService.del(`temp_board_${member.id}`);
+        //기존 임시저장 데이터 삭제
+        await this.deleteTempBoardData(member);
 
         this.redisService.setJsonData(
             `temp_board_${member.id}`,
@@ -54,10 +54,25 @@ export class BoardService {
         );
     }
 
+    async deleteTempBoardData(
+        member: Member
+    ): Promise<ResponseDto> {
+        this.redisService.del(`temp_board_${member.id}`);
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "임시 게시글 삭제 성공", 
+            {  }
+        );
+    }
+
     async createBoard(
         boardDto: BoardCreateDto,
         member: Member
     ): Promise<ResponseDto> {
+        //임시 저장 게시글의 생성인경우, 임시저장 데이터를 삭제
+        await this.deleteTempBoardData(member);
+
         //임시 파일을 board 경로로 이동
         for (const file of boardDto.fileList) {
             const res = await this.fileuploadService.moveFileToBoard(file.filePath);
