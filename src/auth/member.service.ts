@@ -56,7 +56,17 @@ export class MemberService {
                 
                 this.logger.log(`login success... Token: ${accessToken}`);
     
-                return new ResponseDto(HttpStatus.OK, "로그인 성공", {accessToken, refreshToken});
+                return new ResponseDto(
+                    HttpStatus.OK, 
+                    "로그인 성공", 
+                    {
+                        accessToken, 
+                        refreshToken,
+                        userId,
+                        userNo: user.id,
+                        userName: user.name
+                    }
+                );
             } else {
                 // 비밀번호가 틀린경우
                 throw new BadRequestException(`로그인 실패, 비밀번호를 확인해주세요.`);

@@ -26,7 +26,7 @@ export class MemberController {
     }
 
     @Post('/signin')
-    @ApiOperation({ summary: "로그인", description: '로그인 후 토큰 발급, 회원가입한 회원정보를 입력합니다.' })
+    @ApiOperation({ summary: "로그인", description: '로그인 후 토큰 발급, 회원가입한 회원정보를 입력합니다. 성공시 토큰과 기본 유저정보를 반환합니다.' })
     @ApiResponse({status: HttpStatus.OK, description: '로그인 성공 응답', type: ResponseDto,})
     signIn(
         @Body(ValidationPipe) memberSignInDto: MemberSignInDto
