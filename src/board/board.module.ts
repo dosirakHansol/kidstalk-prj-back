@@ -13,6 +13,9 @@ import { BoardLikeRepository } from 'src/board-like/board-like.repository';
 import { BoardLike } from 'src/board-like/board-like.entity';
 import { RedisModule } from 'src/redis/redis.module';
 import { BoardLikeService } from 'src/board-like/board-like.service';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { MulterConfigService } from 'src/configs/multer.config';
 
 @Module({
   imports: [
@@ -29,8 +32,19 @@ import { BoardLikeService } from 'src/board-like/board-like.service';
       inject: [ConfigService],
     }),
     RedisModule,
+    MulterModule.registerAsync({
+      useClass: MulterConfigService,
+    }),
   ],
   controllers: [BoardController],
-  providers: [BoardService, BoardRepository, BoardLikeService, BoardLikeRepository, BoardFileRepository]
+  providers: [
+    BoardService, 
+    BoardRepository, 
+    BoardLikeService, 
+    BoardLikeRepository, 
+    BoardFileRepository,
+    FileUploadService,
+    MulterConfigService
+  ]
 })
 export class BoardModule {}

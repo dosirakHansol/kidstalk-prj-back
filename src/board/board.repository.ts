@@ -19,6 +19,8 @@ export class BoardRepository extends Repository<Board> {
     ): Promise<ResponseDto> {
         const { title, description, topicId, fileList } = boardDto;
 
+        this.logger.log(`board file : ${JSON.stringify(fileList)}`);
+
         const board = this.create({
             title,
             description,
@@ -28,7 +30,7 @@ export class BoardRepository extends Repository<Board> {
         });
 
         try {
-            const saveResult = await this.insert(board); //save -> insert로 변경
+            const saveResult = await this.save(board); //save -> insert -> save로 다시 변경: CASCADE 적용안되는 문제로
 
             return new ResponseDto(
                 HttpStatus.CREATED, 

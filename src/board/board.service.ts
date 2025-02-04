@@ -8,6 +8,7 @@ import { BoardFileRepository } from 'src/board-file/board-file.repository';
 import { RedisService } from 'src/redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { BoardLikeService } from 'src/board-like/board-like.service';
+import { FileUploadService } from 'src/file-upload/file-upload.service';
 
 @Injectable()
 export class BoardService {
@@ -15,6 +16,7 @@ export class BoardService {
         @InjectRepository(BoardRepository) private boardRepository: BoardRepository,
         @InjectRepository(BoardFileRepository) private boardFileRepository: BoardFileRepository,
         private boardLikeService: BoardLikeService,
+        private fileuploadService: FileUploadService,
         private readonly configService: ConfigService,
         private readonly redisService: RedisService,
     ) {}
@@ -56,6 +58,14 @@ export class BoardService {
         boardDto: BoardCreateDto,
         member: Member
     ): Promise<ResponseDto> {
+        //임시 파일을 board 경로로 이동
+        for (const file of boardDto.fileList) {
+            const res = await this.fileuploadService.moveFileToBoard(file.filePath);
+            file.filePath = res.data.filePath;
+        }
+
+        this.logger.log(`board : ${JSON.stringify(boardDto)}`);
+
         return this.boardRepository.createBoard(boardDto, member);
     }
 

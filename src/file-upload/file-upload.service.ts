@@ -44,7 +44,7 @@ export class FileUploadService {
             // 날짜 폴더 추출
             const parts = tempFilePath.split('/');
             // const dateFolder = parts[3]; // 예: "20250203"
-            const dateFolder = this.multerConfigService.getDateFolder();; // 예: "20250203"
+            const dateFolder = this.multerConfigService.getDateFolder(); // 예: "20250203"
             const fileName = parts[4];   // 예: "kidstalk_xxx.png"
         
             // 새롭게 이동할 디렉토리 (board 폴더)
