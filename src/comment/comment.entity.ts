@@ -1,6 +1,7 @@
 import { Member } from "src/auth/member.entity";
 import { Board } from "src/board/board.entity";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CommentLike } from "src/comment-like/comment-like.entity";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Comment extends BaseEntity {
@@ -40,4 +41,12 @@ export class Comment extends BaseEntity {
     //수정일시
     @CreateDateColumn({default: () => "NOW()"})
     updateAt: Date;
+
+    //댓글 좋아요
+    @OneToMany(
+        type => CommentLike, 
+        commentLike => commentLike.comment, 
+        { cascade: false, eager: false },
+    )
+    commentLike: CommentLike[];
 }

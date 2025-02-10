@@ -33,6 +33,7 @@ export class CommentController {
     }
 
     @Get("/list")
+    @ApiBearerAuth()
     @ApiOperation({ summary: "댓글 리스트 불러오기" })
     @ApiQuery({ name: 'boardId', type: Number, description: '게시글 번호(특정 유저 댓글 조회인경우 0)', required: true, default: 0 })
     @ApiQuery({ name: 'page', type: Number, description: '페이지 넘버 (0부터 시작)', required: false, default: 0 })
@@ -41,6 +42,7 @@ export class CommentController {
     @ApiQuery({ name: 'writerId', type: Number, description: '유저(작성자) 번호 없는경우 0', required: false, default: 0 })
     @ApiResponse({status: HttpStatus.OK, description: '응답 메시지 (data에 board배열)', type: ResponseDto,})
     getCommentList(
+        @GetMember() member: Member,
         @Query("page") page: number = 0, //default = 0
         @Query("limit") limit: number = 10, //default = 10
         @Query("boardId") boardId: number = 0,
@@ -48,7 +50,7 @@ export class CommentController {
         @Query("parentId") parentId: number = 0
     ): Promise<ResponseDto>
     {   
-        return this.commentService.getCommentList(page, limit, boardId, writerId, parentId);
+        return this.commentService.getCommentList(page, limit, boardId, writerId, parentId, member);
     }
 
 }

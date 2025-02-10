@@ -15,6 +15,7 @@ import { TokenMiddleware } from './common/middleware/token.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { LocationModule } from './location/location.module';
 import { CommentModule } from './comment/comment.module';
+import { CommentLikeModule } from './comment-like/comment-like.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { CommentModule } from './comment/comment.module';
     BoardFileModule,
     LocationModule,
     CommentModule,
+    CommentLikeModule,
   ],
   controllers: [],
   providers: [],
@@ -59,6 +61,8 @@ export class AppModule implements NestModule{
       .apply(TokenMiddleware)
       .forRoutes(
         {path: '/board/:boardId', method: RequestMethod.GET}, 
-        {path: '/board', method: RequestMethod.GET});
+        {path: '/board', method: RequestMethod.GET},
+        {path: '/comment/list', method: RequestMethod.GET},
+      )
   }
 }

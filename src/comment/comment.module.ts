@@ -7,10 +7,14 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommentRepository } from './comment.repository';
+import { CommentLike } from 'src/comment-like/comment-like.entity';
+import { CommentLikeService } from 'src/comment-like/comment-like.service';
+import { CommentLikeRepository } from 'src/comment-like/comment-like.repository';
+import { RedisModule } from 'src/redis/redis.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Comment]),
+    TypeOrmModule.forFeature([Comment, CommentLike]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -22,8 +26,9 @@ import { CommentRepository } from './comment.repository';
       }),
       inject: [ConfigService],
     }),
+    RedisModule,
   ],
   controllers: [CommentController],
-  providers: [CommentService,CommentRepository]
+  providers: [CommentService,CommentRepository,CommentLikeService,CommentLikeRepository]
 })
 export class CommentModule {}

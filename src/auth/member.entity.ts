@@ -4,6 +4,7 @@ import { Topic } from "src/topic/topic.entity";
 import { Board } from "src/board/board.entity";
 import { BoardLike } from "src/board-like/board-like.entity";
 import { Comment } from "src/comment/comment.entity";
+import { CommentLike } from "src/comment-like/comment-like.entity";
 
 @Entity()
 export class Member extends BaseEntity {
@@ -85,4 +86,11 @@ export class Member extends BaseEntity {
         { cascade: false, eager: false },
     )
     comment: Comment[];
+    
+    @OneToMany(
+        type => CommentLike, 
+        commentLike => commentLike.member, 
+        { cascade: false, eager: false },
+    )
+    commentLike: CommentLike[];
 }

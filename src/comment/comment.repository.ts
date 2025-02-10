@@ -45,16 +45,35 @@ export class CommentRepository extends Repository<Comment> {
         limit: number,
         boardId: number,
         writerId: number,
-        parentId: number
+        parentId: number,
+        memberId: number
     ):Promise<ResponseDto> {
+
+
         const queryBuilder = this.createQueryBuilder('comment')
-            .where('board_id = :boardId', { boardId })
-            .andWhere("parent_id = :parentId", { parentId })
+            .leftJoin(
+                'comment.commentLike',
+                'commentLike',
+                'commentLike.commentId = comment.id AND commentLike.memberId = :memberId',
+                { memberId }
+            ) // 좋아요 여부 확인용
+            .select([
+                'comment.id',
+                'comment.parentId',
+                'comment.description',
+                'comment.createAt',
+                'comment.updateAt',
+                'commentLike.id',
+            ])
+            .where('comment.isDel = false')
+            .andWhere('comment.parentId = :parentId', { parentId }) // `parent_id` → `parentId` 수정
             .limit(limit)
             .offset(page * 10)
-            .orderBy("id", "DESC");
+            .orderBy('comment.id', 'DESC');
 
-        if(!!writerId && writerId != 0) queryBuilder.andWhere("member_id = :writerId", { writerId });
+        if(!!writerId && writerId != 0) queryBuilder.andWhere("comment.memberId = :writerId", { writerId });
+        if(!!boardId && boardId != 0) queryBuilder.andWhere("comment.boardId = :boardId", { boardId });
+
 
         const commentList = await queryBuilder.getMany();
 
