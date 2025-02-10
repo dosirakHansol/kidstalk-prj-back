@@ -119,7 +119,7 @@ export class BoardRepository extends Repository<Board> {
             .orderBy("board.id", "DESC");
         
         if(!!topicId) queryBuilder.andWhere("topic.id = :topicId", { topicId });
-        if(!!writerId) queryBuilder.andWhere("member.id = :memberId", { writerId });
+        if(!!writerId) queryBuilder.andWhere("member.id = :writerId", { writerId });
 
         const boards = await queryBuilder.getMany();
 
@@ -137,7 +137,7 @@ export class BoardRepository extends Repository<Board> {
     async getBoardListCount(topicId: number, writerId: number, memberId: number): Promise<ResponseDto> {
         this.logger.log("getBoardListCount..");
 
-        const queryBuilder = this.createQueryBuilder('board');
+        const queryBuilder = this.createQueryBuilder('board').where('board.isDel = false AND board.isHidden = false');
             
         if(!!topicId) {
             queryBuilder.leftJoinAndSelect('board.topic', 'topic') // Topic 관계 연결
@@ -145,10 +145,10 @@ export class BoardRepository extends Repository<Board> {
         }
         if(!!writerId) {
             queryBuilder.leftJoinAndSelect('board.member', 'member') // Member 관계 연결
-            queryBuilder.andWhere("member.id = :memberId", { writerId });
+            queryBuilder.andWhere("member.id = :writerId", { writerId });
         }
 
-        const listCount = await queryBuilder.where('board.isDel = false AND board.isHidden = false').getCount();
+        const listCount = await queryBuilder.getCount();
 
         return new ResponseDto(
             HttpStatus.OK, 
