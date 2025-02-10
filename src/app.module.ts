@@ -14,6 +14,7 @@ import { join } from 'path';
 import { TokenMiddleware } from './common/middleware/token.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { LocationModule } from './location/location.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { LocationModule } from './location/location.module';
     BoardLikeModule,
     BoardFileModule,
     LocationModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [],

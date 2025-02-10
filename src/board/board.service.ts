@@ -74,14 +74,16 @@ export class BoardService {
         await this.deleteTempBoardData(member);
 
         //임시 파일을 board 경로로 이동
-        for (const file of boardDto.fileList) {
-            const res = await this.fileuploadService.moveFileToBoard(file.filePath);
-            file.filePath = res.data.filePath;
+        if(boardDto.fileList.length > 0) {
+            for (const file of boardDto.fileList) {
+                const res = await this.fileuploadService.moveFileToBoard(file.filePath);
+                file.filePath = res.data.filePath;
+            }
         }
 
         this.logger.log(`board : ${JSON.stringify(boardDto)}`);
 
-        return this.boardRepository.createBoard(boardDto, member);
+        return await this.boardRepository.createBoard(boardDto, member);
     }
 
     async getBoardById(boardId: number, member: Member): Promise<ResponseDto> {

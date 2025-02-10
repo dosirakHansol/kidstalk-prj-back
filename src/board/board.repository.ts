@@ -111,7 +111,8 @@ export class BoardRepository extends Repository<Board> {
                 'boardlike.id',
             ])
             // .loadRelationCountAndMap('board.likesCount', 'board.boardLike') //총 좋아요 개수, 따로 조회로 옮김
-            .loadRelationCountAndMap('board.filesCount', 'board.boardFile')
+            .loadRelationCountAndMap('board.filesCount', 'board.boardFile') //게시글 첨부파일 카운트
+            .loadRelationCountAndMap('board.commentCount', 'board.comment') //게시글 댓글수 카운트
             .where('board.isDel = false AND board.isHidden = false')
             .limit(10)
             .offset(page * 10)
