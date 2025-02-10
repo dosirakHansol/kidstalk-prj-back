@@ -153,7 +153,10 @@ export class MemberService {
                 "토큰 재생성 성공", 
                 {
                     accessToken: newAccessToken,
-                    refreshToken: newRefreshToken
+                    refreshToken: newRefreshToken,
+                    userId,
+                    userNo: user.id,
+                    userName: user.name
                 }
             );
         } else{
