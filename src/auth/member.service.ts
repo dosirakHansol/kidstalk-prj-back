@@ -8,12 +8,18 @@ import { ResponseDto } from 'src/common/dto/response.dto';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from 'src/redis/redis.service';
 import { Member } from './member.entity';
+import { BoardRepository } from 'src/board/board.repository';
+import { BoardLikeRepository } from 'src/board-like/board-like.repository';
+import { CommentRepository } from 'src/comment/comment.repository';
 
 @Injectable()
 export class MemberService {
     constructor(
         @InjectRepository(MemberRepository)
         private memberRepository: MemberRepository,
+        private boardRepository: BoardRepository,
+        private boardLikeRepository: BoardLikeRepository,
+        private commentRepository: CommentRepository,
         private jwtService: JwtService,
         private readonly configService: ConfigService,
         private readonly redisService: RedisService,
@@ -165,4 +171,22 @@ export class MemberService {
         }
     }
     // Token (E)
+
+    async countUserActivity(
+        member: Member
+    ):Promise<ResponseDto> {
+        const userBoardCount = await this.boardRepository.countBy({ memberId: member.id });
+        const userBoardLikeCount = await this.boardLikeRepository.countBy({ memberId: member.id });
+        const userCommentCount = await this.commentRepository.countBy({ memberId: member.id });
+
+        return new ResponseDto(
+            HttpStatus.OK, 
+            "유저 활동 조회 성공", 
+            {
+                userBoardCount,
+                userBoardLikeCount,
+                userCommentCount
+            }
+        );
+    }
 }

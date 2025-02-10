@@ -84,4 +84,15 @@ export class MemberController {
         this.logger.log("refreshToken", refreshToken);
         return this.memberService.validateRefreshToken(refreshToken);
     }
+
+    @Get('/info/count')
+    @ApiOperation({ summary: "유저와 관련된 좋아요, 댓글, 게시글 수 카운팅" })
+    @ApiBearerAuth()
+    @UseGuards(CustomAuthGuard)
+    countUserActivity(
+        @GetMember() member: Member
+    ): Promise<ResponseDto> {
+        console.log('member', member);
+        return this.memberService.countUserActivity(member);
+    }
 }
